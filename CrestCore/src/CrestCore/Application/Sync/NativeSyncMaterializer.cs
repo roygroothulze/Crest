@@ -45,7 +45,7 @@ public static class NativeSyncMaterializer {
             var (accessPolicy, accessModifiedAt) = AccessPolicy(local, remote, access);
             var settings = new SpaceSettings(remote.Name, remote.Symbol, remote.Accent, brandingIds.Contains(remote.Id) ? remote.Branding : null, remote.BrowsingPreferences,
                 credentials, accessPolicy, remote.IsSavedTabsExpanded, remote.SavedTabsExpansionModifiedAt?.Moment,
-                credentialsModifiedAt, accessModifiedAt);
+                credentialsModifiedAt, accessModifiedAt, local?.Settings.SharesDataWith);
             spaces.Add(new(remote.Id, remote.ProfileId, settings, folders, tabs, groups, archive, history));
         }
         foreach (var id in pending.Where(id => spaces.All(space => space.Id != id))) {

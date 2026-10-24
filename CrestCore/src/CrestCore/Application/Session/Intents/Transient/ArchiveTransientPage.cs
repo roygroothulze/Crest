@@ -19,7 +19,7 @@ public sealed record ArchiveTransientPage(Guid WorkspaceId, Guid PageId, Guid Sp
         workspace.RequirePendingTransient(PageId);
         var space = workspace.Editable(turn.Basis, SpaceId);
         var page = workspace.Known(PageId, turn.Pages);
-        if (page.SpaceId != space.Id || page.ProfileId != space.ProfileId) throw new Rejected(new PageProfileMismatch(page.Id, space.Id));
+        if (page.SpaceId != space.Id || page.ProfileId != workspace.DataProfileOf(space)) throw new Rejected(new PageProfileMismatch(page.Id, space.Id));
         var edited = BrowserTabCollection.Restore(space);
         edited.ArchiveTransient(workspace.NewTab(turn.Ids.Next(), new TabContent(page.Address, View: null, page.Title),
             TabPlacement.Current, turn.Now), turn.Now);

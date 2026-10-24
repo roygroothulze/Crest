@@ -23,7 +23,7 @@ public sealed record PromoteTransientPage(Guid WorkspaceId, Guid WindowId, Guid 
         workspace.RequirePendingTransient(PageId);
         var page = workspace.Known(PageId, turn.Pages);
         var source = workspace.Editable(turn.Basis, page.SpaceId);
-        if (source.ProfileId != page.ProfileId) throw new Rejected(new PageProfileMismatch(page.Id, source.Id));
+        if (workspace.DataProfileOf(source) != page.ProfileId) throw new Rejected(new PageProfileMismatch(page.Id, source.Id));
         var destination = workspace.Editable(turn.Basis, SpaceId);
         var edited = BrowserTabCollection.Restore(destination);
         var followUp = new WindowFollowUp(workspace.IssuingWindow(WindowId));
@@ -31,7 +31,7 @@ public sealed record PromoteTransientPage(Guid WorkspaceId, Guid WindowId, Guid 
             Placement, turn.Now));
         edited.InsertTab(tab, followUp.Window?.Tab(destination.Id) is { } shown ? edited.InsertionIndexAfter(shown) : null);
         followUp.ShowTab(destination.Id, tab.Id).ShowSpace(destination.Id);
-        var adopts = page.MovesBetweenWindows && page.SpaceId == destination.Id && page.ProfileId == destination.ProfileId;
+        var adopts = page.MovesBetweenWindows && page.SpaceId == destination.Id && page.ProfileId == workspace.DataProfileOf(destination);
         return new(NativeSessionAuthority.Replacing(turn.Basis, edited.Capture(destination)), SyncStaging.Creation, followUp,
             new([], null, new SessionTransientPromotion(page.Id, tab.Id, adopts)), Completes: page.Id);
     }

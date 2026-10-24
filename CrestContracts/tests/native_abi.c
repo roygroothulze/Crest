@@ -126,7 +126,8 @@ static size_t session_seed(uint8_t* output, size_t capacity, uint8_t deleted) {
         1, 1, 0,       /* offers to save passwords and sync them, not to the system's */
         0, 1, 0,       /* open, saved tabs expanded, never collapsed */
         0,             /* nobody chose whether it uses Crest Passwords */
-        0              /* nobody chose its lock */
+        0,             /* nobody chose its lock */
+        0              /* keeps its own website data */
     };
     size_t at = 0;
     assert(capacity >= 1 + 37 + sizeof(settings) + 4 + 48);

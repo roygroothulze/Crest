@@ -9,6 +9,8 @@ namespace CrestCore.Contracts;
 /// on or off, on any device, or null when nobody has since Crest kept that time.
 /// <see cref="Branding"/> is null for a Space stored before branding existed, which
 /// wears the look its accent and symbol give it; <see cref="Look"/> is what it wears.
+/// <see cref="SharesDataWith"/> names the Space whose website data this one browses
+/// with on this device, or is null for a Space that keeps its own.
 /// </summary>
 [Observed]
 public sealed record SpaceSettings(
@@ -22,7 +24,8 @@ public sealed record SpaceSettings(
     bool IsSavedTabsExpanded,
     DateTimeOffset? SavedTabsExpansionModifiedAt,
     DateTimeOffset? CredentialsEnabledModifiedAt = null,
-    DateTimeOffset? AccessPolicyModifiedAt = null) {
+    DateTimeOffset? AccessPolicyModifiedAt = null,
+    Guid? SharesDataWith = null) {
     #region Variables
 
     /// <summary>The branding the Space wears: its own, with a banner strength stored

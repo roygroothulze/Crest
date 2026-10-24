@@ -187,12 +187,12 @@ internal sealed class Pages(Device device, Engines engines, IClock clock, IIdSou
     internal Engine? Opening(SpaceState space, TabState? tab, Page? opener) =>
         opener?.Engine ?? Chosen(space, tab) ?? engines.Default;
 
-    /// The page `pageId` names as the opener of a new page in `space` of
-    /// `workspaceId`: one the core hosts in that workspace and the Space's
-    /// profile. Null for none, or for one the core no longer hosts, which
+    /// The page `pageId` names as the opener of a new page of `workspaceId`
+    /// browsing with the profile `profileId` names: one the core hosts in
+    /// that workspace and profile. Null for none, or for one the core no longer hosts, which
     /// leaves the new page to the site's choice.
-    internal Page? Opener(Guid? pageId, Guid workspaceId, SpaceState space) =>
-        pageId is { } id && Hosted(id) is { } opener && opener.WorkspaceId == workspaceId && opener.ProfileId == space.ProfileId
+    internal Page? Opener(Guid? pageId, Guid workspaceId, Guid profileId) =>
+        pageId is { } id && Hosted(id) is { } opener && opener.WorkspaceId == workspaceId && opener.ProfileId == profileId
             ? opener
             : null;
 

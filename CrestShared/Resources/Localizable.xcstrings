@@ -369,6 +369,9 @@
     "%@ stopped using Crest" : {
 
     },
+    "%@ use this Space’s sign-ins and site data." : {
+
+    },
     "%@, %@" : {
       "localizations" : {
         "en" : {
@@ -7566,6 +7569,9 @@
     "Keep work, personal browsing, and projects in separate Spaces." : {
 
     },
+    "Keeps its own sign-ins and site data." : {
+
+    },
     "Key" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -7890,6 +7896,9 @@
 
     },
     "Locked" : {
+
+    },
+    "Locked Spaces keep their own data." : {
 
     },
     "Locks again when Crest goes to the background." : {
@@ -11955,6 +11964,9 @@
         }
       }
     },
+    "Share Data With" : {
+
+    },
     "Share Feedback on r/CrestBrowser" : {
 
     },
@@ -14032,6 +14044,9 @@
     "This site’s certificate is not trusted. Information you send could be read by others." : {
 
     },
+    "This Space can’t share browsing data with that Space." : {
+
+    },
     "This Tab" : {
       "comment" : "Screen sharing picker note on the tab of the page that asks."
     },
@@ -14939,6 +14954,9 @@
     "Users" : {
 
     },
+    "Uses sign-ins and site data from “%@”." : {
+
+    },
     "Verified Chrome Web Store package" : {
 
     },
@@ -15141,6 +15159,9 @@
       }
     },
     "Website colors for pins" : {
+
+    },
+    "Website Data" : {
 
     },
     "Website release" : {

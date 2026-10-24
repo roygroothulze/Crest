@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// One Space's settings on touch: browsing, the lock, and deletion. The
-/// desktop spreads the same sections over a Space's Settings pages.
+/// One Space's settings on touch: browsing, the lock, data sharing, and
+/// deletion. The desktop spreads the same sections over a Space's Settings
+/// pages.
 ///
 /// This is a run of `Section`s rather than a `Form`, so the shell's own
 /// container holds them.
@@ -24,6 +25,8 @@ struct BrowserSpaceSettingsSections: View {
             space: space,
             spaceAccess: spaceAccess
         )
+
+        BrowserSpaceDataSharingSection(browser: browser, space: space)
 
         BrowserSpaceDeletionSection(
             browser: browser,

@@ -9,6 +9,7 @@ namespace CrestCore.Contracts;
 /// has erased the profile's data. Beginning again with the same operation, as
 /// a relaunch does, changes nothing. The window that asked moves to the first
 /// Space that stays, when it showed this one. A locked Space may be deleted.
+/// Spaces that shared its website data keep their own again from then on.
 public sealed record BeginDeletingSpace(Guid WorkspaceId, Guid WindowId, Guid SpaceId, Guid OperationId)
     : SessionIntent(WorkspaceId) {
     #region Actions - Session
@@ -24,7 +25,12 @@ public sealed record BeginDeletingSpace(Guid WorkspaceId, Guid WindowId, Guid Sp
                 ? new(turn.Basis, SyncStaging.Withdrawal)
                 : throw new Rejected(new WrongDeletionOperation(space.Id));
         SessionState.RequireRemovable(turn.Basis.Spaces.Count - turn.Basis.SpaceDeletions.Count);
-        var next = turn.Basis with { SpaceDeletions = [.. turn.Basis.SpaceDeletions, new(OperationId, space.Id, space.ProfileId)] };
+        var next = turn.Basis with {
+            Spaces = [.. turn.Basis.Spaces.Select(guest => guest.Settings.SharesDataWith == space.Id
+                ? workspace.Configured(guest, guest.Settings with { SharesDataWith = null })
+                : guest)],
+            SpaceDeletions = [.. turn.Basis.SpaceDeletions, new(OperationId, space.Id, space.ProfileId)]
+        };
         var followUp = new WindowFollowUp(workspace.IssuingWindow(WindowId));
         if (followUp.Window?.ShownSpaceId == space.Id)
             followUp.ShowSpace(next.Spaces.First(candidate => workspace.PendingDeletion(next, candidate.Id) is null).Id);

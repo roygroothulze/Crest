@@ -210,6 +210,7 @@ enum Rejection: Equatable, Error, Sendable {
     case closePreparationUnderway(ClosePreparationUnderway)
     case credentialRecordLimitReached(CredentialRecordLimitReached)
     case currentTabsOnly(CurrentTabsOnly)
+    case dataSharingUnavailable(DataSharingUnavailable)
     case defaultEngineAlreadyRegistered(DefaultEngineAlreadyRegistered)
     case downloadLimitReached(DownloadLimitReached)
     case duplicateCredential(DuplicateCredential)
@@ -370,6 +371,7 @@ enum Rejection: Equatable, Error, Sendable {
         case .cannotMoveSplitAcrossSpaces(let value): value.message
         case .cannotPinSplit(let value): value.message
         case .currentTabsOnly(let value): value.message
+        case .dataSharingUnavailable(let value): value.message
         case .duplicateSearchEngineName(let value): value.message
         case .duplicateSearchShortcut(let value): value.message
         case .fileUnreadable(let value): value.message
@@ -2075,6 +2077,14 @@ struct DataRetentionPreferences: Equatable, Sendable {
     var history: DataRetention
     var archive: DataRetention
     var downloads: DataRetention
+}
+
+struct DataSharingUnavailable: Equatable, Sendable {
+    let spaceID: UUID
+
+    var message: LocalizedStringResource {
+        LocalizedStringResource("This Space can’t share browsing data with that Space.")
+    }
 }
 
 struct DecideSitePermission: Intent, SitePermissionIntent, Equatable, Sendable {
@@ -5616,6 +5626,12 @@ struct SetSpaceBranding: Intent, SessionIntent, Equatable, Sendable {
     let branding: SpaceBranding
 }
 
+struct SetSpaceDataSharing: Intent, SessionIntent, Equatable, Sendable {
+    let workspaceID: UUID
+    let spaceID: UUID
+    let hostSpaceID: UUID?
+}
+
 struct SetSpaceIdentity: Intent, SessionIntent, Equatable, Sendable {
     let workspaceID: UUID
     let spaceID: UUID
@@ -6185,6 +6201,7 @@ struct SpaceSettings: Equatable, Sendable {
     let savedTabsExpansionModifiedAt: Date?
     let credentialsEnabledModifiedAt: Date?
     let accessPolicyModifiedAt: Date?
+    let sharesDataWith: UUID?
     let look: SpaceBranding
     let requiresAuthentication: Bool
 
@@ -6202,6 +6219,7 @@ struct SpaceSettings: Equatable, Sendable {
         var savedTabsExpansionModifiedAt: Date?
         var credentialsEnabledModifiedAt: Date?
         var accessPolicyModifiedAt: Date?
+        var sharesDataWith: UUID?
     }
 
     /// The record's fields alone, as a platform sends it back.
@@ -6217,7 +6235,8 @@ struct SpaceSettings: Equatable, Sendable {
             isSavedTabsExpanded: isSavedTabsExpanded,
             savedTabsExpansionModifiedAt: savedTabsExpansionModifiedAt,
             credentialsEnabledModifiedAt: credentialsEnabledModifiedAt,
-            accessPolicyModifiedAt: accessPolicyModifiedAt
+            accessPolicyModifiedAt: accessPolicyModifiedAt,
+            sharesDataWith: sharesDataWith
         )
     }
 }
@@ -23381,6 +23400,10 @@ final class SpaceSettingsModel: ObservedModel {
         access(keyPath: \.accessPolicyModifiedAt)
         return accessPolicyModifiedAtStorage
     }
+    var sharesDataWith: UUID? {
+        access(keyPath: \.sharesDataWith)
+        return sharesDataWithStorage
+    }
     var look: SpaceBranding {
         access(keyPath: \.look)
         return lookStorage
@@ -23401,6 +23424,7 @@ final class SpaceSettingsModel: ObservedModel {
     @ObservationIgnored private var savedTabsExpansionModifiedAtStorage: Date?
     @ObservationIgnored private var credentialsEnabledModifiedAtStorage: Date?
     @ObservationIgnored private var accessPolicyModifiedAtStorage: Date?
+    @ObservationIgnored private var sharesDataWithStorage: UUID?
     @ObservationIgnored private var lookStorage: SpaceBranding
     @ObservationIgnored private var requiresAuthenticationStorage: Bool
 
@@ -23417,6 +23441,7 @@ final class SpaceSettingsModel: ObservedModel {
             savedTabsExpansionModifiedAt: savedTabsExpansionModifiedAt,
             credentialsEnabledModifiedAt: credentialsEnabledModifiedAt,
             accessPolicyModifiedAt: accessPolicyModifiedAt,
+            sharesDataWith: sharesDataWith,
             look: look,
             requiresAuthentication: requiresAuthentication
         )
@@ -23434,6 +23459,7 @@ final class SpaceSettingsModel: ObservedModel {
         savedTabsExpansionModifiedAtStorage = value.savedTabsExpansionModifiedAt
         credentialsEnabledModifiedAtStorage = value.credentialsEnabledModifiedAt
         accessPolicyModifiedAtStorage = value.accessPolicyModifiedAt
+        sharesDataWithStorage = value.sharesDataWith
         lookStorage = value.look
         requiresAuthenticationStorage = value.requiresAuthentication
     }
@@ -23482,6 +23508,10 @@ final class SpaceSettingsModel: ObservedModel {
         if accessPolicyModifiedAtStorage != value.accessPolicyModifiedAt {
             accessPolicyModifiedAtStorage = value.accessPolicyModifiedAt
             withMutation(keyPath: \.accessPolicyModifiedAt) {}
+        }
+        if sharesDataWithStorage != value.sharesDataWith {
+            sharesDataWithStorage = value.sharesDataWith
+            withMutation(keyPath: \.sharesDataWith) {}
         }
         if lookStorage != value.look {
             lookStorage = value.look

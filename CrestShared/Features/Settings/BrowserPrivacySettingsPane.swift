@@ -30,6 +30,7 @@ struct BrowserPrivacySettingsPane: View {
             if canRevealSelectedSpaceData {
                 if fixedSpaceID != nil, let selectedSpace {
                     BrowserSpaceAccessPolicySection(browser: browser, space: selectedSpace, spaceAccess: spaceAccess)
+                    BrowserSpaceDataSharingSection(browser: browser, space: selectedSpace)
                 }
 
                 if let selectedSpaceID {

@@ -28,13 +28,14 @@ public sealed record OpenPage(Guid PageId, Guid WorkspaceId, Guid SpaceId, Guid?
         var workspace = pages.Device.Workspace(WorkspaceId);
         pages.Device.Opened(WindowId);
         var space = pages.Hosting(workspace, SpaceId);
+        var profileId = workspace.DataProfileOf(space);
         pages.RequireUnowned(WorkspaceId, WindowId, TabId, moving: null);
         var tab = space.Tabs.FirstOrDefault(held => held.Id == TabId);
-        var opener = pages.Opener(OpenerPageId, WorkspaceId, space);
+        var opener = pages.Opener(OpenerPageId, WorkspaceId, profileId);
         var history = TabId is { } kept && opener is null ? pages.KeptHistory(WorkspaceId, space, kept) : null;
         var engine = (history?.History.Engine is { } shown ? pages.Engines.Registered(shown) : null) ?? pages.Opening(space, tab, opener)
             ?? throw new Rejected(new EngineNotRegistered());
-        var page = new Page(PageId, engine, space.ProfileId, WorkspaceId, space.Id, TabId, WindowId, Transient,
+        var page = new Page(PageId, engine, profileId, WorkspaceId, space.Id, TabId, WindowId, Transient,
             openedByPage: opener is not null);
         pages.Add(page);
         var restore = TabId is { } tabId ? pages.Restorable(WorkspaceId, space, tabId, engine.Kind) : null;

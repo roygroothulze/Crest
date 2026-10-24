@@ -36,7 +36,8 @@ internal static partial class StoredSessionCodec {
                 Flag(value[Key.IsSavedTabsExpanded]) ?? true,
                 OptionalDate(value[Key.SavedTabsExpansionModifiedAt]),
                 OptionalDate(value[Key.CredentialsEnabledModifiedAt]),
-                OptionalDate(value[Key.AccessPolicyModifiedAt])),
+                OptionalDate(value[Key.AccessPolicyModifiedAt]),
+                SharedDataSpace(value[Key.SharesDataWith])),
             [.. Items(value[Key.Folders]).Select(DecodeFolder)],
             [.. Items(value[Key.Tabs]).Select(DecodeTab)],
             [.. Items(value[Key.SplitGroups]).Select(DecodeSplitGroup)],
@@ -66,8 +67,13 @@ internal static partial class StoredSessionCodec {
         Put(value, Key.SavedTabsExpansionModifiedAt, settings.SavedTabsExpansionModifiedAt);
         Put(value, Key.CredentialsEnabledModifiedAt, settings.CredentialsEnabledModifiedAt);
         Put(value, Key.AccessPolicyModifiedAt, settings.AccessPolicyModifiedAt);
+        if (settings.SharesDataWith is { } shared) value[Key.SharesDataWith] = BareIdentity(shared);
         return value;
     }
+
+    /// The Space whose website data a stored Space browses with. A Space
+    /// stored without one, or with one this build cannot read, keeps its own.
+    private static Guid? SharedDataSpace(JsonNode? node) => Guid.TryParse(TolerantText(node), out var id) ? id : null;
 
     internal static JsonArray EncodeHistory(IEnumerable<HistoryEntryState> history) => EncodeAll(history, Encode);
 

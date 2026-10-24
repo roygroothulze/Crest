@@ -4389,6 +4389,10 @@
     "smooth-appearance-previews": {
       "category": "fixed",
       "message": "Dragging an Appearance setting, such as the window border, material, Space icon size or the tab and address field colors, no longer slows the whole app down."
+    },
+    "share-website-data-between-spaces": {
+      "category": "new",
+      "message": "A Space can now use another Space's sign-ins and site data. Choose the Space under Share Data With in the Space's settings. Spaces keep their own data unless you choose one."
     }
   }
 }
